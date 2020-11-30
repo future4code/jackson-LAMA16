@@ -4,6 +4,18 @@ import BaseDataBase from "./BaseDatabase";
 export class BandDatabase extends BaseDataBase {
   private static TABLE_NAME = "Tabela_Bandas";
 
+  private toModel(dbModel?: any): Band | undefined {
+    return (
+      dbModel &&
+      new Band(
+        dbModel.id,
+        dbModel.name,
+        dbModel.music_genre,
+        dbModel.responsible,
+      )
+    )
+  }
+
   public async createBand(
     id: string,
     name: string,
@@ -24,14 +36,14 @@ export class BandDatabase extends BaseDataBase {
     }
   }
 
-  public async getBandDetails(input: any): Promise<Band | undefined> {
+  public async getBandDetails(input: any): Promise<any> {
     try {
-       const result = await BaseDataBase.connection.raw(`
-          SELECT * from ${BandDatabase.TABLE_NAME} WHERE id = '${input.id}' OR WHERE name = '${input.name}'
-       `);
-       return (result[0][0]);
+      const result = await BaseDataBase.connection.raw(`
+          SELECT * from ${BandDatabase.TABLE_NAME} WHERE id = '${input}' OR name = '${input}'
+      `);
+      return this.toModel( result[0][0]);
     } catch (error) {
-       throw new Error(error.sqlMessage || error.message)
+      throw new Error(error.sqlMessage || error.message)
     }
- }
+  }
 }

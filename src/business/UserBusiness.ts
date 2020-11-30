@@ -24,6 +24,7 @@ export class UserBusiness {
             const idGenerator = new IdGenerator();
             const id = idGenerator.generate();
 
+
             const hashManager = new HashManager();
             const hashPassword = await hashManager.hash(user.password);
 
@@ -38,18 +39,20 @@ export class UserBusiness {
             if (error.message.includes("for key 'email'")) {
                 throw new BaseError("Email already in use", 409)
             }
+            throw new BaseError(error.message, error.statusCode);
+
         }
     }
 
     public async getUserByEmail(user: LoginInputDTO) {
         try {
             if (!user.email || !user.password) {
-                throw new BaseError("Missing input",422);
-             }
+                throw new BaseError("Missing input", 422);
+            }
 
-             if (!user) {
+            if (!user) {
                 throw new BaseError("Invalid credentials", 401);
-             }
+            }
 
             const userDatabase = new UserDatabase();
             const userFromDB = await userDatabase.getUserByEmail(user.email);
@@ -59,7 +62,7 @@ export class UserBusiness {
 
             if (!hashCompare) {
                 throw new BaseError("Invalid credentials", 401);
-             }
+            }
 
             const authenticator = new Authenticator();
             const accessToken = authenticator.generateToken({ id: userFromDB.getId(), role: userFromDB.getRole() });

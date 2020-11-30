@@ -12,7 +12,7 @@ export class BandBusiness {
 
             const verifyToken = authenticator.getData(user.token)
 
-            if (!band.name || !band.genre || !band.responsible) {
+            if (!band.name || !band.genre) {
                 throw new BaseError("Missing input", 422);
             }
 
@@ -24,7 +24,7 @@ export class BandBusiness {
             const id = idGenerator.generate();
 
             const bandDatabase = new BandDatabase();
-            await bandDatabase.createBand(id, band.name, band.genre, band.responsible);
+            await bandDatabase.createBand(id, band.name, band.genre, verifyToken.id);
 
             const accessToken = authenticator.generateToken({ id, role: verifyToken.role });
 
@@ -33,17 +33,18 @@ export class BandBusiness {
             if (error.message.includes("for key 'email'")) {
                 throw new BaseError("Email already in use", 409)
             }
+            throw new BaseError(error.message, error.statusCode)
         }
     }
 
     public async bandDetails(input: any) {
         try {
-            
+
             const bandDatabase = new BandDatabase();
             const band = await bandDatabase.getBandDetails(input);
 
-            if (!input.id) {
-                throw new BaseError("invalid-id", 401)
+            if (!input) {
+                throw new BaseError("invalid-input", 401)
             }
 
             if (!band) {
@@ -57,7 +58,7 @@ export class BandBusiness {
                 responsible: band.getResponsible()
             }
         } catch (error) {
-            throw new BaseError(error.statusCode, error.message)
+            throw new BaseError(error.message, error.statusCode)
         }
     }
 }

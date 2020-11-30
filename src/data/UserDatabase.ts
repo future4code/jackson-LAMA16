@@ -22,6 +22,7 @@ export class UserDatabase extends BaseDataBase {
           role
         })
         .into(UserDatabase.TABLE_NAME);
+
     } catch (error) {
       throw new Error(error.sqlMessage || error.message);
     }
@@ -38,7 +39,7 @@ export class UserDatabase extends BaseDataBase {
 
       return User.toUserModel(result[0]);
     } catch (error) {
-
+      throw new Error(error.sqlMessage || error.message)
     }
   }
 }
