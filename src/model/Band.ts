@@ -2,7 +2,7 @@ export class Band{
     constructor(
         private id: string,
         private name: string,
-        private genre: string,
+        private music_genre: string,
         private responsible: string
     ){}
 
@@ -15,7 +15,7 @@ export class Band{
     }
 
     getGenre(){
-        return this.genre;
+        return this.music_genre;
     }
 
     getResponsible(){
@@ -31,7 +31,7 @@ export class Band{
     }
 
     setGenre(genre: string){
-        return this.genre = genre;
+        return this.music_genre = genre;
     }
 
     setResponsible(responsible: string){
@@ -42,5 +42,4 @@ export class Band{
 export interface BandInputDTO{
     name: string,
     genre: string,
-    responsible: string
 }
